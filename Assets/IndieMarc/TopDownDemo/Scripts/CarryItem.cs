@@ -162,6 +162,9 @@ namespace IndieMarc.TopDown
 
         public bool CanTake(GameObject taker)
         {
+            if (CompareTag("Food")) // newly added 10/15/2025 so that food is not carried and is just deleted
+                return false;
+
             CharacterHoldItem player = taker.GetComponent<CharacterHoldItem>();
             CarryItem current_item = player.GetHeldItem();
             

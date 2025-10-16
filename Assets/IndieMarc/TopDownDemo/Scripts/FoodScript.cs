@@ -1,4 +1,5 @@
-using UnityEngine;
+﻿using UnityEngine;
+using IndieMarc.TopDown;   // ✅ This gives access to CarryItem and other IndieMarc scripts
 
 public class FoodItem : MonoBehaviour
 {
@@ -8,19 +9,29 @@ public class FoodItem : MonoBehaviour
     [Tooltip("Tag of the object that can collect the food (e.g. 'Player').")]
     public string collectorTag = "Player";
 
+    [Tooltip("Prevent this food from being carried by the player.")]
+    public bool cannotBeCarried = true;
+
     private SpriteRenderer spriteRenderer;
     private Collider2D itemCollider;
+    private Vector3 originalPosition;
 
     private void Awake()
     {
-        // Cache components for enabling/disabling
         spriteRenderer = GetComponent<SpriteRenderer>();
         itemCollider = GetComponent<Collider2D>();
+        originalPosition = transform.position;
+
+        if (cannotBeCarried)
+        {
+            CarryItem carry = GetComponent<CarryItem>();
+            if (carry != null)
+                carry.enabled = false;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Check if the object that touched the food has the right tag
         if (other.CompareTag(collectorTag))
         {
             Collect();
@@ -29,17 +40,14 @@ public class FoodItem : MonoBehaviour
 
     private void Collect()
     {
-        // Hide the food and disable its collider
         spriteRenderer.enabled = false;
         itemCollider.enabled = false;
-
-        // Start the respawn timer
         Invoke(nameof(Respawn), respawnTime);
     }
 
     private void Respawn()
     {
-        // Show the food again and re-enable its collider
+        transform.position = originalPosition;
         spriteRenderer.enabled = true;
         itemCollider.enabled = true;
     }
