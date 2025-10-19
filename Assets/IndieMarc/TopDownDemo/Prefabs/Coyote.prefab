@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5329173377870834987}
   - component: {fileID: 7484884171849552697}
   - component: {fileID: 6128064537060467029}
+  - component: {fileID: -4792418452082927445}
   m_Layer: 0
   m_Name: Coyote
   m_TagString: Player
@@ -162,8 +163,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d6c8f07fec693847bd1321caa821503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 4824270433119796, guid: 25325a4f845eebc47b1a00b01a949eda, type: 3}
-  moveSpeed: 3
+  chaseRange: 15
+  eatDistance: 1.5
+  eatCooldown: 5
 --- !u!114 &6128064537060467029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,3 +183,25 @@ MonoBehaviour:
   sort_refresh_rate: 0
   auto_rotate: 1
   rotate_offset: 0
+--- !u!195 &-4792418452082927445
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122327380614368981}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 4.47
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 8.94
+  m_BaseOffset: 4.47
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4

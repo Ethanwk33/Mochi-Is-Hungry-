@@ -1,48 +1,99 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.AI;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class CoyoteAI : MonoBehaviour
+public class CoyoteChase : MonoBehaviour
 {
-    public Transform player;         
-    public float moveSpeed = 3f;     
+    [Header("Chase Settings")]
+    public float chaseRange = 15f;       // Distance at which the coyote starts chasing
+    public float eatDistance = 1.5f;     // Distance at which the coyote "eats" the player
+    public float eatCooldown = 5f;       // Time before the coyote can eat again
 
-    private Rigidbody2D rb;
+    [Header("NavMesh Settings")]
+    public float navMeshSearchRadius = 10f; // How far to search for NavMesh at spawn
 
-    void Start()
+    private Transform player;
+    private NavMeshAgent agent;
+    private float lastEatTime = -Mathf.Infinity;
+
+    void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
+        agent = GetComponent<NavMeshAgent>();
 
-        if (player == null)
+        // Disable agent so Unity doesn't try to initialize it before NavMesh is ready
+        if (agent != null)
         {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-                player = playerObj.transform;
-            else
-                Debug.LogError("CoyoteAI: No Player found with tag 'Player'");
+            agent.enabled = false;
         }
-
-        rb.gravityScale = 0;
-        rb.freezeRotation = true;
     }
 
-    void FixedUpdate()
+    IEnumerator Start()
     {
-        if (player == null) return;
+        // Wait one frame to allow NavMeshSurface to build (if it's runtime)
+        yield return null;
 
-        Vector2 direction = (player.position - transform.position).normalized;
-        Vector2 targetPos = rb.position + direction * moveSpeed * Time.fixedDeltaTime;
+        // Snap to NavMesh if possible before enabling the agent
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(transform.position, out hit, navMeshSearchRadius, NavMesh.AllAreas))
+        {
+            transform.position = hit.position;
+            agent.enabled = true;
+        }
+        else
+        {
+            Debug.LogError($"Coyote '{name}' could not find NavMesh within {navMeshSearchRadius} units of spawn.");
+            yield break;
+        }
 
-
-        rb.MovePosition(targetPos);
+        // Find player by tag
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+        else
+        {
+            Debug.LogError("No GameObject with tag 'Player' found in the scene.");
+        }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void Update()
     {
-        if (collision.CompareTag("Player"))
+        // If agent isn't ready or no player, do nothing
+        if (player == null || agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        // Start chasing if in range
+        if (distance <= chaseRange)
         {
-            Debug.Log("Coyote caught the cat!");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            agent.SetDestination(player.position);
+
+            // If close enough, "eat" the player
+            if (distance <= eatDistance && Time.time - lastEatTime >= eatCooldown)
+            {
+                EatPlayer();
+                lastEatTime = Time.time;
+            }
         }
+    }
+
+    void EatPlayer()
+    {
+        Debug.Log("Coyote has eaten the player!");
+        player.gameObject.SetActive(false);
+
+        // Optional: Add animation, sound, effects, game over, etc.
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        // Visualize chase and eat ranges in the editor
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, chaseRange);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, eatDistance);
     }
 }
