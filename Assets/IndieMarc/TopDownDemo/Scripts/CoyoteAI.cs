@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class CoyoteChase : MonoBehaviour
 {
@@ -8,44 +7,15 @@ public class CoyoteChase : MonoBehaviour
     public float chaseRange = 15f;       // Distance at which the coyote starts chasing
     public float eatDistance = 1.5f;     // Distance at which the coyote "eats" the player
     public float eatCooldown = 5f;       // Time before the coyote can eat again
-
-    [Header("NavMesh Settings")]
-    public float navMeshSearchRadius = 10f; // How far to search for NavMesh at spawn
+    public float moveSpeed = 5f;         // Movement speed of the coyote
 
     private Transform player;
-    private NavMeshAgent agent;
     private float lastEatTime = -Mathf.Infinity;
 
-    void Awake()
+    void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
+        lastEatTime = Time.time; // Prevent immediate eating
 
-        // Disable agent so Unity doesn't try to initialize it before NavMesh is ready
-        if (agent != null)
-        {
-            agent.enabled = false;
-        }
-    }
-
-    IEnumerator Start()
-    {
-        // Wait one frame to allow NavMeshSurface to build (if it's runtime)
-        yield return null;
-
-        // Snap to NavMesh if possible before enabling the agent
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(transform.position, out hit, navMeshSearchRadius, NavMesh.AllAreas))
-        {
-            transform.position = hit.position;
-            agent.enabled = true;
-        }
-        else
-        {
-            Debug.LogError($"Coyote '{name}' could not find NavMesh within {navMeshSearchRadius} units of spawn.");
-            yield break;
-        }
-
-        // Find player by tag
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -57,18 +27,27 @@ public class CoyoteChase : MonoBehaviour
         }
     }
 
+
     void Update()
     {
-        // If agent isn't ready or no player, do nothing
-        if (player == null || agent == null || !agent.enabled || !agent.isOnNavMesh)
-            return;
+        if (player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
         // Start chasing if in range
         if (distance <= chaseRange)
         {
-            agent.SetDestination(player.position);
+            Vector3 direction = (player.position - transform.position).normalized;
+
+            // Move toward the player
+            transform.position += direction * moveSpeed * Time.deltaTime;
+
+            // Rotate to face the player if direction is valid
+            if (direction != Vector3.zero)
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+            }
 
             // If close enough, "eat" the player
             if (distance <= eatDistance && Time.time - lastEatTime >= eatCooldown)
@@ -84,12 +63,12 @@ public class CoyoteChase : MonoBehaviour
         Debug.Log("Coyote has eaten the player!");
         player.gameObject.SetActive(false);
 
-        // Optional: Add animation, sound, effects, game over, etc.
+   
     }
 
     void OnDrawGizmosSelected()
     {
-        // Visualize chase and eat ranges in the editor
+
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, chaseRange);
 
