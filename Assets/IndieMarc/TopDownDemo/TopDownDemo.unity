@@ -6233,6 +6233,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7484884171849552697, guid: feedc216e0dcb38418505d31b2ef022a,
         type: 3}
+      propertyPath: chaseRange
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7484884171849552697, guid: feedc216e0dcb38418505d31b2ef022a,
+        type: 3}
       propertyPath: eatDistance
       value: 0.5
       objectReference: {fileID: 0}
