@@ -1,15 +1,17 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro; 
 
 public class HungerBar : MonoBehaviour
 {
     [Header("Hunger Settings")]
     public float maxHunger = 100f;
-    public float hungerDepletionRate = 2f; // per second
-    public float hungerLossFromCoyote = 10f; // per second when being eaten
+    public float hungerDepletionRate = 2f;
+    public float hungerLossFromCoyote = 10f;
 
-    [Header("References")]
-    public Slider hungerSlider; // Assign your UI Slider here
+    [Header("UI References")]
+    public Slider hungerSlider;
+    public TextMeshProUGUI hungerText; 
 
     private float currentHunger;
     private bool isBeingEaten = false;
@@ -17,27 +19,41 @@ public class HungerBar : MonoBehaviour
     void Start()
     {
         currentHunger = maxHunger;
+
         if (hungerSlider != null)
             hungerSlider.maxValue = maxHunger;
     }
 
     void Update()
     {
-        // Hunger drains over time
+        // Drain hunger over time
         currentHunger -= hungerDepletionRate * Time.deltaTime;
 
-        // Extra drain if being eaten
+        // Drain faster when being eaten
         if (isBeingEaten)
             currentHunger -= hungerLossFromCoyote * Time.deltaTime;
 
-        // Clamp value
+        // Clamp to valid range
         currentHunger = Mathf.Clamp(currentHunger, 0, maxHunger);
 
         // Update UI
         if (hungerSlider != null)
             hungerSlider.value = currentHunger;
 
-        // Handle death
+        if (hungerText != null)
+        {
+            hungerText.text = $"Hunger: {Mathf.RoundToInt(currentHunger)}";
+
+            float percent = currentHunger / maxHunger;
+            if (percent > 0.6f)
+                hungerText.color = Color.green;
+            else if (percent > 0.3f)
+                hungerText.color = Color.yellow;
+            else
+                hungerText.color = Color.red;
+        }
+
+        // Death condition
         if (currentHunger <= 0)
             Die();
     }
@@ -47,12 +63,6 @@ public class HungerBar : MonoBehaviour
         isBeingEaten = eating;
     }
 
-    void Die()
-    {
-        Debug.Log("Mochi has died of hunger!");
-        // Disable player or trigger death animation
-        gameObject.SetActive(false);
-    }
     public void AddHunger(float amount)
     {
         currentHunger += amount;
@@ -60,11 +70,19 @@ public class HungerBar : MonoBehaviour
 
         if (hungerSlider != null)
             hungerSlider.value = currentHunger;
+
+        if (hungerText != null)
+            hungerText.text = $"Hunger: {Mathf.RoundToInt(currentHunger)}";
     }
+
     public float GetHungerPercent()
     {
         return currentHunger / maxHunger;
     }
 
-
+    void Die()
+    {
+        Debug.Log("Mochi has died of hunger!");
+        gameObject.SetActive(false);
+    }
 }
