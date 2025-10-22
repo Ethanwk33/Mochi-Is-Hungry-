@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
-using IndieMarc.TopDown;   // ✅ This gives access to CarryItem and other IndieMarc scripts
+using IndieMarc.TopDown;
 
 public class FoodItem : MonoBehaviour
 {
+    [Header("Food Settings")]
+    [Tooltip("How much hunger this food restores when eaten.")]
+    public float hungerRestoreAmount = 5f;
+
     [Tooltip("How long before the food respawns after being collected.")]
     public float respawnTime = 5f;
 
@@ -34,6 +38,13 @@ public class FoodItem : MonoBehaviour
     {
         if (other.CompareTag(collectorTag))
         {
+            HungerBar hungerBar = other.GetComponent<HungerBar>();
+            if (hungerBar != null)
+            {
+                hungerBar.AddHunger(hungerRestoreAmount);
+                Debug.Log($"{gameObject.name} eaten! Restored {hungerRestoreAmount} hunger.");
+            }
+
             Collect();
         }
     }

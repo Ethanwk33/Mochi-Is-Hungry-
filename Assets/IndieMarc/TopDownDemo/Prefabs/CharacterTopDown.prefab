@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 114351677167572512}
   - component: {fileID: 114359742649268298}
   - component: {fileID: 114902388524385934}
+  - component: {fileID: -261251213889172367}
   m_Layer: 0
   m_Name: CharacterTopDown
   m_TagString: Player
@@ -320,6 +321,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hand: {fileID: 4124074945642986}
+--- !u!114 &-261251213889172367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378692596590864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1f6a19c3006ba64290de1acd8635396, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHunger: 100
+  hungerDepletionRate: 2
+  hungerLossFromCoyote: 5
+  hungerSlider: {fileID: 0}
 --- !u!1 &1534099313841622
 GameObject:
   m_ObjectHideFlags: 0

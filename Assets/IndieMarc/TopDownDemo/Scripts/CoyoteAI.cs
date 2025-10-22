@@ -4,22 +4,20 @@ using UnityEngine;
 public class CoyoteChase : MonoBehaviour
 {
     [Header("Chase Settings")]
-    public float chaseRange = 15f;       // Distance at which the coyote starts chasing
-    public float eatDistance = 1.5f;     // Distance at which the coyote "eats" the player
-    public float eatCooldown = 5f;       // Time before the coyote can eat again
-    public float moveSpeed = 5f;         // Movement speed of the coyote
+    public float chaseRange = 15f;
+    public float eatDistance = 1.5f;
+    public float moveSpeed = 5f;
 
     private Transform player;
-    private float lastEatTime = -Mathf.Infinity;
+    private HungerBar hungerBar; // Reference to player's hunger
 
     void Start()
     {
-        lastEatTime = Time.time; // Prevent immediate eating
-
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
             player = playerObj.transform;
+            hungerBar = playerObj.GetComponent<HungerBar>();
         }
         else
         {
@@ -27,48 +25,38 @@ public class CoyoteChase : MonoBehaviour
         }
     }
 
-
     void Update()
     {
         if (player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // Start chasing if in range
+        // Chase player
         if (distance <= chaseRange)
         {
             Vector3 direction = (player.position - transform.position).normalized;
-
-            // Move toward the player
             transform.position += direction * moveSpeed * Time.deltaTime;
 
-            // Rotate to face the player if direction is valid
             if (direction != Vector3.zero)
             {
                 Quaternion lookRotation = Quaternion.LookRotation(direction);
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
             }
 
-            // If close enough, "eat" the player
-            if (distance <= eatDistance && Time.time - lastEatTime >= eatCooldown)
-            {
-                EatPlayer();
-                lastEatTime = Time.time;
-            }
+            // If close enough, start eating
+            if (distance <= eatDistance && hungerBar != null)
+                hungerBar.SetBeingEaten(true);
+            else if (hungerBar != null)
+                hungerBar.SetBeingEaten(false);
         }
-    }
-
-    void EatPlayer()
-    {
-        Debug.Log("Coyote has eaten the player!");
-        player.gameObject.SetActive(false);
-
-   
+        else if (hungerBar != null)
+        {
+            hungerBar.SetBeingEaten(false);
+        }
     }
 
     void OnDrawGizmosSelected()
     {
-
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, chaseRange);
 
