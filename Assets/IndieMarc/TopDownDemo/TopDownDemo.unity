@@ -6519,6 +6519,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7484884171849552697, guid: feedc216e0dcb38418505d31b2ef022a,
         type: 3}
+      propertyPath: maxSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7484884171849552697, guid: feedc216e0dcb38418505d31b2ef022a,
+        type: 3}
+      propertyPath: minSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7484884171849552697, guid: feedc216e0dcb38418505d31b2ef022a,
+        type: 3}
       propertyPath: moveSpeed
       value: 1
       objectReference: {fileID: 0}
@@ -10313,6 +10323,11 @@ PrefabInstance:
       propertyPath: hungerSlider
       value: 
       objectReference: {fileID: 1847180918}
+    - target: {fileID: -261251213889172367, guid: 25325a4f845eebc47b1a00b01a949eda,
+        type: 3}
+      propertyPath: hungerLossFromCoyote
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 1378692596590864, guid: 25325a4f845eebc47b1a00b01a949eda, type: 3}
       propertyPath: m_Name
       value: CharacterTopDown
@@ -10356,6 +10371,21 @@ PrefabInstance:
     - target: {fileID: 4824270433119796, guid: 25325a4f845eebc47b1a00b01a949eda, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114275663839265892, guid: 25325a4f845eebc47b1a00b01a949eda,
+        type: 3}
+      propertyPath: move_max
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114275663839265892, guid: 25325a4f845eebc47b1a00b01a949eda,
+        type: 3}
+      propertyPath: move_accel
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 114275663839265892, guid: 25325a4f845eebc47b1a00b01a949eda,
+        type: 3}
+      propertyPath: move_deccel
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

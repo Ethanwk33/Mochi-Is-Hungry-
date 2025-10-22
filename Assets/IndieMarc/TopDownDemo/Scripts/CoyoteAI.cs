@@ -1,15 +1,18 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CoyoteChase : MonoBehaviour
 {
     [Header("Chase Settings")]
     public float chaseRange = 15f;
     public float eatDistance = 1.5f;
-    public float moveSpeed = 5f;
+
+    [Header("Speed Settings")]
+    public float maxSpeed = 8f;   // Speed when Mochi is full
+    public float minSpeed = 2f;   // Speed when Mochi is starving
 
     private Transform player;
-    private HungerBar hungerBar; // Reference to player's hunger
+    private HungerBar hungerBar; // Reference to Mochi’s hunger
+    private float currentSpeed;
 
     void Start()
     {
@@ -31,27 +34,35 @@ public class CoyoteChase : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // Chase player
+        // Adjust speed dynamically based on hunger percentage
+        float hungerPercent = (hungerBar != null) ? hungerBar.GetHungerPercent() : 1f;
+        currentSpeed = Mathf.Lerp(minSpeed, maxSpeed, hungerPercent);
+
+        // Start chasing
         if (distance <= chaseRange)
         {
             Vector3 direction = (player.position - transform.position).normalized;
-            transform.position += direction * moveSpeed * Time.deltaTime;
+            transform.position += direction * currentSpeed * Time.deltaTime;
 
+            // Rotate smoothly toward player
             if (direction != Vector3.zero)
             {
                 Quaternion lookRotation = Quaternion.LookRotation(direction);
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
             }
-
-            // If close enough, start eating
-            if (distance <= eatDistance && hungerBar != null)
-                hungerBar.SetBeingEaten(true);
-            else if (hungerBar != null)
-                hungerBar.SetBeingEaten(false);
+            if (hungerBar != null)
+            {
+                if (distance <= eatDistance)
+                    hungerBar.SetBeingEaten(true);
+                else
+                    hungerBar.SetBeingEaten(false);
+            }
         }
-        else if (hungerBar != null)
+        else
         {
-            hungerBar.SetBeingEaten(false);
+            // Stop eating when player is out of range
+            if (hungerBar != null)
+                hungerBar.SetBeingEaten(false);
         }
     }
 
@@ -59,7 +70,6 @@ public class CoyoteChase : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, chaseRange);
-
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, eatDistance);
     }

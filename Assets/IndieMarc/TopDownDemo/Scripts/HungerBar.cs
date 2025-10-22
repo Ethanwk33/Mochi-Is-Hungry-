@@ -61,5 +61,10 @@ public class HungerBar : MonoBehaviour
         if (hungerSlider != null)
             hungerSlider.value = currentHunger;
     }
+    public float GetHungerPercent()
+    {
+        return currentHunger / maxHunger;
+    }
+
 
 }
