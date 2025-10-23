@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro; 
+using TMPro;
+using IndieMarc.TopDown;
 
 public class HungerBar : MonoBehaviour
 {
@@ -83,6 +84,12 @@ public class HungerBar : MonoBehaviour
     void Die()
     {
         Debug.Log("Mochi has died of hunger!");
-        gameObject.SetActive(false);
+
+        // Disable movement or control scripts instead of the whole GameObject
+        var movement = GetComponent<PlayerControls>();
+        if (movement != null)
+            movement.enabled = false;
+
+        // Optionally trigger a death animation or game over screen
     }
 }
