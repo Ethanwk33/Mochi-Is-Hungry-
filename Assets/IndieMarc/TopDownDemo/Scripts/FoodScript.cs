@@ -36,9 +36,16 @@ public class FoodItem : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("Touched: " + other.name);
+
+        HungerBar hungerBar = other.GetComponentInParent<HungerBar>();
+        if (hungerBar == null)
+            hungerBar = other.GetComponentInChildren<HungerBar>();
+
+        Debug.Log("Found HungerBar? " + (hungerBar != null));
+
         if (other.CompareTag(collectorTag))
         {
-            HungerBar hungerBar = other.GetComponent<HungerBar>();
             if (hungerBar != null)
             {
                 hungerBar.AddHunger(hungerRestoreAmount);
@@ -48,6 +55,7 @@ public class FoodItem : MonoBehaviour
             Collect();
         }
     }
+
 
     private void Collect()
     {

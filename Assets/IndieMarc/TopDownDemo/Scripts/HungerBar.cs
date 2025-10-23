@@ -16,7 +16,7 @@ public class HungerBar : MonoBehaviour
 
     private float currentHunger;
     private bool isEating = false;
-
+    public static HungerBar instance;
     void Start()
     {
         currentHunger = maxHunger;

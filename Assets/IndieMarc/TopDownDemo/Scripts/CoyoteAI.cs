@@ -64,7 +64,7 @@ public class CoyoteChase : MonoBehaviour
         if (hungerBar != null)
             hungerBar.SetBeingEaten(isEating);
 
-        Debug.Log($"Coyote isEating: {isEating}");
+        //Debug.Log($"Coyote isEating: {isEating}");
     }
 
     void OnDrawGizmosSelected()
