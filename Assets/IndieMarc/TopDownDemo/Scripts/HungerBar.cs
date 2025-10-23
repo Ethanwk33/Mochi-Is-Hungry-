@@ -14,7 +14,7 @@ public class HungerBar : MonoBehaviour
     public TextMeshProUGUI hungerText; 
 
     private float currentHunger;
-    private bool isBeingEaten = false;
+    private bool isEating = false;
 
     void Start()
     {
@@ -30,7 +30,7 @@ public class HungerBar : MonoBehaviour
         currentHunger -= hungerDepletionRate * Time.deltaTime;
 
         // Drain faster when being eaten
-        if (isBeingEaten)
+        if (isEating)
             currentHunger -= hungerLossFromCoyote * Time.deltaTime;
 
         // Clamp to valid range
@@ -60,7 +60,7 @@ public class HungerBar : MonoBehaviour
 
     public void SetBeingEaten(bool eating)
     {
-        isBeingEaten = eating;
+        isEating = eating;
     }
 
     public void AddHunger(float amount)
