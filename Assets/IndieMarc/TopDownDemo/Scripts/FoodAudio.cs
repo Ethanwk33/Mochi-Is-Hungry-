@@ -4,18 +4,7 @@ using IndieMarc.TopDown;
 public class FoodAudio : MonoBehaviour
 {
     [Header("Audio Settings")]
-    public AudioClip eatSound;        // Assign your unique food sound here
-    private AudioSource audioSource;
-
-    void Awake()
-    {
-        // Add an AudioSource component if not already present
-        audioSource = gameObject.GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
-    }
+    public AudioClip eatSound; // Assign your unique food sound here
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -23,8 +12,7 @@ public class FoodAudio : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayEatSound();
-            // Optional: destroy the food after being eaten
-            Destroy(gameObject);
+            Destroy(gameObject); // Safe to destroy immediately
         }
     }
 
@@ -32,7 +20,7 @@ public class FoodAudio : MonoBehaviour
     {
         if (eatSound != null)
         {
-            audioSource.PlayOneShot(eatSound);
+            AudioSource.PlayClipAtPoint(eatSound, transform.position, 4.0f);
         }
         else
         {
