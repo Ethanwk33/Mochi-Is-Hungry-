@@ -75,4 +75,25 @@ public class CoyoteChase : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, eatDistance);
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            HungerBar hunger = other.GetComponent<HungerBar>();
+            if (hunger != null)
+                hunger.SetBeingEaten(true);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            HungerBar hunger = other.GetComponent<HungerBar>();
+            if (hunger != null)
+                hunger.SetBeingEaten(false);
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;   // 👈 add this for scene restarting
 using IndieMarc.TopDown;
 
 public class HungerBar : MonoBehaviour
@@ -12,11 +13,12 @@ public class HungerBar : MonoBehaviour
 
     [Header("UI References")]
     public Slider hungerSlider;
-    public TextMeshProUGUI hungerText; 
+    public TextMeshProUGUI hungerText;
 
     private float currentHunger;
     private bool isEating = false;
-    public static HungerBar instance;
+    private bool isDead = false; // 👈 prevents multiple restarts
+
     void Start()
     {
         currentHunger = maxHunger;
@@ -27,6 +29,8 @@ public class HungerBar : MonoBehaviour
 
     void Update()
     {
+        if (isDead) return; // 👈 stop logic after death
+
         // Drain hunger over time
         currentHunger -= hungerDepletionRate * Time.deltaTime;
 
@@ -83,13 +87,22 @@ public class HungerBar : MonoBehaviour
 
     void Die()
     {
+        if (isDead) return; // 👈 prevents repeating
+        isDead = true;
+
         Debug.Log("Mochi has died of hunger!");
 
-        // Disable movement or control scripts instead of the whole GameObject
+        // Disable movement or control scripts
         var movement = GetComponent<PlayerControls>();
         if (movement != null)
             movement.enabled = false;
 
-        // Optionally trigger a death animation or game over screen
+        // Optionally show a death delay before restarting
+        Invoke(nameof(RestartScene), 2f); // 👈 waits 2 seconds, then restarts
+    }
+
+    void RestartScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

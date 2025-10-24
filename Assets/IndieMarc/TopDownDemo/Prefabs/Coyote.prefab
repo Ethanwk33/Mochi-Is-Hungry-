@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: -4792418452082927445}
   m_Layer: 0
   m_Name: Coyote
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -165,7 +165,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chaseRange: 15
   eatDistance: 1.5
-  eatCooldown: 5
+  maxSpeed: 8
+  minSpeed: 2
 --- !u!114 &6128064537060467029
 MonoBehaviour:
   m_ObjectHideFlags: 0
