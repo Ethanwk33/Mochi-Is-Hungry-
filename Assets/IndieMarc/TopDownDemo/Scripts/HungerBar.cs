@@ -7,17 +7,17 @@ using IndieMarc.TopDown;
 public class HungerBar : MonoBehaviour
 {
     [Header("Hunger Settings")]
-    public float maxHunger = 100f;
-    public float hungerDepletionRate = 2f;
-    public float hungerLossFromCoyote = 10f;
+    public float maxHunger = 100f; // max hunger value mochi can have
+    public float hungerDepletionRate = 2f; // passive hunger loss rate
+    public float hungerLossFromCoyote = 10f; // hunger loss when the coyote is eating mochi
 
     [Header("UI References")]
-    public Slider hungerSlider;
-    public TextMeshProUGUI hungerText;
+    public Slider hungerSlider; // references UI slider for visual updating
+    public TextMeshProUGUI hungerText; // referencecs the hunger text for dynamic updating of hunger amount
 
-    private float currentHunger;
-    private bool isEating = false;
-    private bool isDead = false; 
+    private float currentHunger; // current hunger level
+    private bool isEating = false; // indicates if mochi is being eaten
+    private bool isDead = false; // flag to prevent multiple death and unwanted looping
 
     void Start()
     {
@@ -53,11 +53,11 @@ public class HungerBar : MonoBehaviour
 
             float percent = currentHunger / maxHunger;
             if (percent > 0.6f)
-                hungerText.color = Color.green;
+                hungerText.color = Color.green; // hunger is green, meaning mochi is not hungry
             else if (percent > 0.3f)
-                hungerText.color = Color.yellow;
+                hungerText.color = Color.yellow; // hunger is yellow, meaning mochi is hungry
             else
-                hungerText.color = Color.red;
+                hungerText.color = Color.red; // hunger is red, meaning mochi is starving and close to death
         }
 
         // triggering death if the hunger reaches 0
