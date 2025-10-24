@@ -89,9 +89,13 @@ namespace IndieMarc.TopDown
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
-        {
-            if (collision.GetComponent<CarryItem>())
-                TakeItem(collision.GetComponent<CarryItem>());
+        { // changed 10/15/2025, revised so that food items are not carried and other items are still carried (tag check)
+            CarryItem item = collision.GetComponent<CarryItem>();
+
+            if (item != null && !collision.CompareTag("Food"))
+            {
+                TakeItem(item);
+            }
         }
 
         void OnCollisionStay2D(Collision2D coll)
