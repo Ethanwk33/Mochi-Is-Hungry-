@@ -7,8 +7,8 @@ public class CoyoteChase : MonoBehaviour
     public float eatDistance = 1.5f;
 
     [Header("Speed Settings")]
-    public float maxSpeed = 8f;   // Speed when Mochi is full
-    public float minSpeed = 2f;   // Speed when Mochi is starving
+    public float maxSpeed = 8f;   
+    public float minSpeed = 2f;   
 
     private Transform player;
     private HungerBar hungerBar;
@@ -17,6 +17,7 @@ public class CoyoteChase : MonoBehaviour
 
     void Start()
     {
+        //finds the player by tag
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -37,19 +38,19 @@ public class CoyoteChase : MonoBehaviour
     void Update()
     {
         if (player == null) return;
-
+        //calculates the distance to the player
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // Adjust coyote speed dynamically based on Mochi’s hunger
+        // adjusts the coyote speed based upon mochi's hunger level
         float hungerPercent = (hungerBar != null) ? hungerBar.GetHungerPercent() : 1f;
         currentSpeed = Mathf.Lerp(minSpeed, maxSpeed, hungerPercent);
 
-        // Only chase if within range
+        // only chases if within a specified range
         if (distance <= chaseRange)
         {
             Vector3 direction = (player.position - transform.position).normalized;
             transform.position += direction * currentSpeed * Time.deltaTime;
-
+            //rotates towards the player
             if (direction != Vector3.zero)
             {
                 Quaternion lookRotation = Quaternion.LookRotation(direction);
@@ -57,16 +58,16 @@ public class CoyoteChase : MonoBehaviour
             }
         }
 
-        // Distance-based eating logic
+        // determines if the coyote is close enough to eat
         isEating = (distance <= eatDistance);
 
-        // Update HungerBar
+        // updates the hungerbar
         if (hungerBar != null)
             hungerBar.SetBeingEaten(isEating);
 
         //Debug.Log($"Coyote isEating: {isEating}");
     }
-
+    //visualizing the chase and eat ranges in the scene view
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -75,12 +76,13 @@ public class CoyoteChase : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, eatDistance);
     }
-
+    // triggers the eating logic
     private void OnTriggerEnter2D(Collider2D other)
     {
+        //checks if tagged as player, if it is, toggled setbeingeaten 
         if (other.CompareTag("Player"))
         {
-            HungerBar hunger = other.GetComponent<HungerBar>();
+            HungerBar hunger = other.GetComponent<HungerBar>(); 
             if (hunger != null)
                 hunger.SetBeingEaten(true);
         }
@@ -88,6 +90,7 @@ public class CoyoteChase : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        //checks if tagged as player, if it is, toggled setbeingeaten 
         if (other.CompareTag("Player"))
         {
             HungerBar hunger = other.GetComponent<HungerBar>();

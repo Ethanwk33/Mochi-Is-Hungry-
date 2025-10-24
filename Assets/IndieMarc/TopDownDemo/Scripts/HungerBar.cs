@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;   // 👈 add this for scene restarting
+using UnityEngine.SceneManagement;   
 using IndieMarc.TopDown;
 
 public class HungerBar : MonoBehaviour
@@ -17,31 +17,33 @@ public class HungerBar : MonoBehaviour
 
     private float currentHunger;
     private bool isEating = false;
-    private bool isDead = false; // 👈 prevents multiple restarts
+    private bool isDead = false; 
 
     void Start()
     {
+        //intializing the hunger to max hunger upon starting
         currentHunger = maxHunger;
 
+        //setting the slider max value
         if (hungerSlider != null)
             hungerSlider.maxValue = maxHunger;
     }
 
     void Update()
     {
-        if (isDead) return; // 👈 stop logic after death
+        if (isDead) return; // stopping the logic after death
 
-        // Drain hunger over time
+        // draining the hunger over a cerain time
         currentHunger -= hungerDepletionRate * Time.deltaTime;
 
-        // Drain faster when being eaten
+        // eating mechanic, draining faster when being eaten
         if (isEating)
             currentHunger -= hungerLossFromCoyote * Time.deltaTime;
 
-        // Clamp to valid range
+        // keeping the hunger to stay between 0 and max
         currentHunger = Mathf.Clamp(currentHunger, 0, maxHunger);
 
-        // Update UI
+        // updating hunger text and color based upon the current hunger level
         if (hungerSlider != null)
             hungerSlider.value = currentHunger;
 
@@ -58,49 +60,49 @@ public class HungerBar : MonoBehaviour
                 hungerText.color = Color.red;
         }
 
-        // Death condition
+        // triggering death if the hunger reaches 0
         if (currentHunger <= 0)
             Die();
     }
-
+    // called to notify if the coyote is eating mochi
     public void SetBeingEaten(bool eating)
     {
         isEating = eating;
     }
-
+    //called for when food is collected in order to restore hunger points
     public void AddHunger(float amount)
     {
         currentHunger += amount;
         currentHunger = Mathf.Clamp(currentHunger, 0, maxHunger);
-
+        //updating the UI
         if (hungerSlider != null)
             hungerSlider.value = currentHunger;
 
         if (hungerText != null)
             hungerText.text = $"Hunger: {Mathf.RoundToInt(currentHunger)}";
     }
-
+    //returns the hunger percentage
     public float GetHungerPercent()
     {
         return currentHunger / maxHunger;
     }
-
+    //player death due to starvation
     void Die()
     {
-        if (isDead) return; // 👈 prevents repeating
+        if (isDead) return; // prevents multiple calls
         isDead = true;
 
         Debug.Log("Mochi has died of hunger!");
 
-        // Disable movement or control scripts
+        //disables movement and controls when death occurs
         var movement = GetComponent<PlayerControls>();
         if (movement != null)
             movement.enabled = false;
 
-        // Optionally show a death delay before restarting
-        Invoke(nameof(RestartScene), 2f); // 👈 waits 2 seconds, then restarts
+        //restarts the scene after 2 seconds
+        Invoke(nameof(RestartScene), 2f); 
     }
-
+    //reloads the scene to restart automatically
     void RestartScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

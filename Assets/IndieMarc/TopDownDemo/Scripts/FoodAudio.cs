@@ -4,7 +4,7 @@ using IndieMarc.TopDown;
 public class FoodAudio : MonoBehaviour
 {
     [Header("Audio Settings")]
-    public AudioClip eatSound; // Assign your unique food sound here
+    public AudioClip eatSound; // unique food sounds for the script attatchment
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -20,11 +20,11 @@ public class FoodAudio : MonoBehaviour
     {
         if (eatSound != null)
         {
-            AudioSource.PlayClipAtPoint(eatSound, transform.position, 4.0f);
+            AudioSource.PlayClipAtPoint(eatSound, transform.position, 4.0f); // playing the eating sound with extra volume
         }
-        else
-        {
-            Debug.LogWarning("Eat sound not assigned on " + gameObject.name);
-        }
+        //else
+        //{
+            //Debug.LogWarning("Eat sound not assigned on " + gameObject.name);
+        //}
     }
 }
